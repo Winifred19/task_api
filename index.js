@@ -1,14 +1,16 @@
-const express = require(express);
+const express = require("express");
 const app = express();
-
-const taskRoute
+const taskRouter = require("./route");
 
 app.use(express.json());
 
-app.get("/",(req,res)=>{
-    res.send("server is up")
+app.get("/", (req, res) => {
+  res.send("server is up");
 });
 
-app.listen(3000,()=>{
-    console.log("server running on port 3000")
+// task routes
+app.use("/tasks", taskRouter);
+
+app.listen(3000, () => {
+  console.log("server running on port 3000");
 });
