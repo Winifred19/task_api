@@ -1,7 +1,11 @@
 let tasks = [];
 
 getTask = (req, res) => {
-  res.json(tasks);
+  res.json({
+    staus: 200,
+    message: "Tasks fetched successfully",
+    data: tasks,
+  });
 };
 
 createTask = (req, res) => {
@@ -11,17 +15,29 @@ createTask = (req, res) => {
 
   // validate the request body
 
-  const { taskName, description, completionDate, status } = body;
+  const { name, description, completionDate, status } = body;
 
-  if (!taskName || !description || !completionDate || !status) {
-    return res.status(400).json({ error: "All fields are required" });
+  if (!name) {
+    return res.status(400).json({ error: "name is are required" });
+  }
+
+  if (!description) {
+    return res.status(400).json({ error: "description is are required" });
+  }
+
+  if (!completionDate) {
+    return res.status(400).json({ error: "completionDate is are required" });
+  }
+
+  if (!status) {
+    return res.status(400).json({ error: "status is are required" });
   }
 
   // create a new task object,
 
   const newTask = {
     id: tasks.length + 1,
-    name: taskName,
+    name,
     description,
     completionDate,
     status,
@@ -37,21 +53,25 @@ createTask = (req, res) => {
   res.json({
     status: 201,
     message: "Task created successfully",
-    task: newTask,
+    data: newTask,
   });
 };
 
 updateTask = (req, res) => {
   // get the task id from the request params
 
-  const { id } = req.params;
+  const { id } = req.params; // destructuring
 
   // find the task using the id
-  const existingTask = tasks.find((task) => task.id === parseInt(id));
+  const existingTask = tasks.find((task) => task.id === id);
 
   // throw error if task not found
   if (!existingTask) {
-    return res.status(404).json({ error: "Task not found" });
+    return res.status(404).json({
+      message: "Task not found",
+      data: {},
+      error: "Task not found",
+    });
   }
 
   const updateData = req.body;
@@ -60,7 +80,7 @@ updateTask = (req, res) => {
 
   const updatedTask = {
     id: existingTask.id,
-    name: updateData.taskName || existingTask.name,
+    name: updateData.name || existingTask.name,
     description: updateData.description || existingTask.description,
     completionDate: updateData.completionDate || existingTask.completionDate,
     status: updateData.status || existingTask.status,
@@ -77,7 +97,35 @@ updateTask = (req, res) => {
   res.json({
     status: 200,
     message: "Task updated successfully",
-    task: updatedTask,
+    data: updatedTask,
+  });
+};
+
+deleteTask = (req, res) => {
+  const { id } = req.params;
+
+  const taskIndex = tasks.findIndex((t) => t.id === parseInt(id));
+  if (taskIndex === -1) {
+    return res.status(404).json({ message: "Task not found" });
+  }
+  const deleted = tasks.splice(taskIndex, 1);
+  res.json({
+    status: 200,
+    message: "Task deleted successfully",
+    data: { deleted },
+  });
+};
+
+getTaskById = (req, res) => {
+  const { id } = req.params;
+  const task = tasks.find((t) => t.id === parseInt(id));
+  if (!task) {
+    return res.status(404).json({ message: "Task not found" });
+  }
+  res.json({
+    status: 200,
+    message: "Task fetched successfully",
+    data: task,
   });
 };
 
@@ -85,4 +133,6 @@ module.exports = {
   getTask,
   createTask,
   updateTask,
+  deleteTask,
+  getTaskById,
 };
