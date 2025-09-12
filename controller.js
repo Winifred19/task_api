@@ -18,19 +18,19 @@ createTask = (req, res) => {
   const { name, description, completionDate, status } = body;
 
   if (!name) {
-    return res.status(400).json({ error: "name is are required" });
+    return res.status(400).json({ error: "name is required" });
   }
 
   if (!description) {
-    return res.status(400).json({ error: "description is are required" });
+    return res.status(400).json({ error: "description is required" });
   }
 
   if (!completionDate) {
-    return res.status(400).json({ error: "completionDate is are required" });
+    return res.status(400).json({ error: "completionDate is required" });
   }
 
   if (!status) {
-    return res.status(400).json({ error: "status is are required" });
+    return res.status(400).json({ error: "status is required" });
   }
 
   // create a new task object,
@@ -63,8 +63,8 @@ updateTask = (req, res) => {
   const { id } = req.params; // destructuring
 
   // find the task using the id
-  const existingTask = tasks.find((task) => task.id === id);
-
+  const existingTask = tasks.find((task) => task.id === +id);
+  console.log(tasks);
   // throw error if task not found
   if (!existingTask) {
     return res.status(404).json({
