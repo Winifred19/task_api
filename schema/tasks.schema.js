@@ -20,6 +20,13 @@ const taskSchema = new Schema(
       type: Date,
       required: false,
     },
+
+    status: {
+      type: String,
+      enum: ["new", "ongoing", "cancelled", "completed", "overdue"],
+      default: "new",
+      required: true,
+    },
   },
   {
     timestamps: true,

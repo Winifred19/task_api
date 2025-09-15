@@ -11,7 +11,7 @@ const dbConnection = () => {
     useUnifiedTopology: true,
   });
 
-  mongoose.connections.on("connected", () => {
+  mongoose.connection.on("connected", () => {
     console.log("database connected successfully");
   });
 
