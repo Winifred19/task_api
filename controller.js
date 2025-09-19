@@ -1,7 +1,5 @@
 const TaskRepository = require("./repository");
 
-const tasks = [];
-
 getTask = async (req, res) => {
   try {
     const tasks = await TaskRepository.getTask();
@@ -71,20 +69,20 @@ createTask = async (req, res) => {
   });
 };
 
-updateTask = (req, res) => {
+updateTask = async (req, res) => {
   // get the task id from the request params
 
   const { id } = req.params; // destructuring
 
   // find the task using the id
-  const existingTask = tasks.find((task) => task.id === +id);
-  console.log(tasks);
+  const existingTask = await TaskRepository.getTask(id);
+
   // throw error if task not found
   if (!existingTask) {
     return res.status(404).json({
-      message: "Task not found",
-      data: {},
-      error: "Task not found",
+      status: false,
+      message: "Invalid task Id",
+      error: "Invalid task ID",
     });
   }
 
@@ -92,20 +90,14 @@ updateTask = (req, res) => {
 
   // update the task properties
 
-  const updatedTask = {
-    id: existingTask.id,
+  const updateTaskData = {
     name: updateData.name || existingTask.name,
     description: updateData.description || existingTask.description,
     completionDate: updateData.completionDate || existingTask.completionDate,
     status: updateData.status || existingTask.status,
   };
 
-  // find the index of the existing task
-  const taskIndex = tasks.findIndex((task) => task.id === parseInt(id));
-
-  // update the task in the tasks array
-
-  tasks[taskIndex] = updatedTask;
+  const updatedTask = await TaskRepository.updateTask({ id }, updateTaskData);
 
   // return the updated task as a response
   res.json({
@@ -115,31 +107,49 @@ updateTask = (req, res) => {
   });
 };
 
-deleteTask = (req, res) => {
+deleteTask = async (req, res) => {
   const { id } = req.params;
+  // destructuring
 
-  const taskIndex = tasks.findIndex((t) => t.id === parseInt(id));
-  if (taskIndex === -1) {
-    return res.status(404).json({ message: "Task not found" });
+  // find the task using the id
+  const existingTask = await TaskRepository.getTask(id);
+
+  // throw error if task not found
+  if (!existingTask) {
+    return res.status(404).json({
+      status: false,
+      message: "Invalid task Id",
+      error: "Invalid task ID",
+    });
   }
-  const deleted = tasks.splice(taskIndex, 1);
+
+  const deleted = TaskRepository.deleteTask(id);
   res.json({
-    status: 200,
+    status: true,
     message: "Task deleted successfully",
-    data: { deleted },
+    data: deleted,
   });
 };
 
-getTaskById = (req, res) => {
-  const { id } = req.params;
-  const task = tasks.find((t) => t.id === parseInt(id));
-  if (!task) {
-    return res.status(404).json({ message: "Task not found" });
+getTaskById = async (req, res) => {
+  const { id } = req.params; // destructuring
+
+  // find the task using the id
+  const existingTask = await TaskRepository.getTask(id);
+
+  // throw error if task not found
+  if (!existingTask) {
+    return res.status(404).json({
+      status: false,
+      message: "Invalid task Id",
+      error: "Invalid task ID",
+    });
   }
+
   res.json({
-    status: 200,
+    status: true,
     message: "Task fetched successfully",
-    data: task,
+    data: existingTask,
   });
 };
 
