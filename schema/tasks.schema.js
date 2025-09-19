@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const { STATUS } = require("../constants");
 
 const taskSchema = new Schema(
   {
@@ -23,8 +24,8 @@ const taskSchema = new Schema(
 
     status: {
       type: String,
-      enum: ["new", "ongoing", "cancelled", "completed", "overdue"],
-      default: "new",
+      enum: STATUS,
+      default: STATUS.NEW,
       required: true,
     },
   },
@@ -33,4 +34,6 @@ const taskSchema = new Schema(
   }
 );
 
-module.exports = mongoose.model("Task", taskSchema);
+const task = model("task", taskSchema);
+
+module.exports = task;

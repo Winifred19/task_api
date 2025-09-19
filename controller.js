@@ -1,14 +1,28 @@
-let tasks = [];
+const TaskRepository = require("./repository");
 
-getTask = (req, res) => {
-  res.json({
-    staus: 200,
-    message: "Tasks fetched successfully",
-    data: tasks,
-  });
+const tasks = [];
+
+getTask = async (req, res) => {
+  try {
+    const tasks = await TaskRepository.getTask();
+
+    res.json({
+      status: true,
+      message: "Tasks fetched successfully",
+      data: tasks,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.json({
+      status: false,
+      message: "An error occurred",
+      error: error.message,
+    });
+  }
 };
 
-createTask = (req, res) => {
+createTask = async (req, res) => {
   // get the request body
 
   const body = req.body;
@@ -35,7 +49,7 @@ createTask = (req, res) => {
 
   // create a new task object,
 
-  const newTask = {
+  const data = {
     id: tasks.length + 1,
     name,
     description,
@@ -46,14 +60,14 @@ createTask = (req, res) => {
 
   // add it to the tasks array
 
-  tasks.push(newTask);
+  const createdTask = await TaskRepository.create(data);
 
   // return the new task as a response
 
   res.json({
     status: 201,
     message: "Task created successfully",
-    data: newTask,
+    data: createdTask,
   });
 };
 
