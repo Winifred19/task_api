@@ -22,6 +22,6 @@ router.delete("/:id", AuthMiddleware, deleteTask); // to delete task data
 
 // create a new task
 
-router.post("/create", createTask); // to add a new task data
+router.post("/create", AuthMiddleware, createTask); // to add a new task data
 
 module.exports = router;
