@@ -6,18 +6,19 @@ const {
   deleteTask,
   getTaskById,
 } = require("./controller");
+const AuthMiddleware = require("./middleware/authMiddleware");
 
 // prefix for this routes is "/tasks"
 
 const router = express.Router();
 
-router.get("/", getTask); // to get task data
+router.get("/", AuthMiddleware, getTask); // to get task data
 
-router.patch("/:id", updateTask); // to update task data
+router.patch("/:id", AuthMiddleware, updateTask); // to update task data
 
-router.get("/:id", getTaskById); // to get a specific task data by id
+router.get("/:id", AuthMiddleware, getTaskById); // to get a specific task data by id
 
-router.delete("/:id", deleteTask); // to delete task data
+router.delete("/:id", AuthMiddleware, deleteTask); // to delete task data
 
 // create a new task
 
